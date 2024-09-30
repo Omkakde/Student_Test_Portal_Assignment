@@ -1,10 +1,10 @@
 import readline from 'readline-sync';
 
 let studentList = [
-    { rollNo: 101, name: "Om", class: 5, gender: "Male", testScores: [] },
-    { rollNo: 102, name: "Sara", class: 5, gender: "Female", testScores: [] },
-    { rollNo: 103, name: "Raj", class: 6, gender: "Male", testScores: [] },
-    { rollNo: 104, name: "Nina", class: 6, gender: "Female", testScores: [] }
+    { rollNo: 101, name: "Om", class: 5, gender: "Male", testScores: [], totalMarks: 0, percentages: 0 },
+    { rollNo: 102, name: "Sara", class: 5, gender: "Female", testScores: [], totalMarks: 0, percentages: 0 },
+    { rollNo: 103, name: "Raj", class: 6, gender: "Male", testScores: [], totalMarks: 0, percentages: 0 },
+    { rollNo: 104, name: "Nina", class: 6, gender: "Female", testScores: [], totalMarks: 0, percentages: 0 }
 ];
 
 function menu() {
@@ -40,20 +40,15 @@ function menu() {
     }
 }
 
-
-
-
-
 function takeTest() {
     console.log("Taking the test...");
 
     studentList.forEach(student => {
-        student.testScores = [];
-        student.testScores.push(
+        student.testScores = [
             { subject: "Math", marks: Math.floor(Math.random() * 101) },
             { subject: "Science", marks: Math.floor(Math.random() * 101) },
             { subject: "English", marks: Math.floor(Math.random() * 101) }
-        );
+        ];
         student.testScores.forEach(score => {
             console.log(`${score.subject}: ${score.marks}`);
         });
@@ -65,33 +60,21 @@ function takeTest() {
 
 
 
-
-
-
-
-
 function generateResults() {
     console.log("Calculating results...");
 
     studentList.forEach(student => {
         const total = student.testScores.reduce((acc, score) => acc + (score.marks || 0), 0);
-        student.totalMarks = total;
-        student.averageScore = (total / student.testScores.length).toFixed(2);
+        student.totalMarks = total; 
+        student.percentages = (total / (student.testScores.length * 100)) * 100; 
 
         console.log(`Student: ${student.name}`);
         console.log(`Total Marks: ${student.totalMarks}`);
-        console.log(`Average Score: ${student.averageScore}%\n`);
+        console.log(`Percentage: ${student.percentages.toFixed(2)}%\n`);
     });
 
     console.log("Results generated!");
 }
-
-
-
-
-
-
-
 
 
 
@@ -119,7 +102,7 @@ function handleViewResult() {
 
         console.log(`+--------------------+-------+`);
         console.log(`Total Marks: ${student.totalMarks}`);
-        console.log(`Average Score: ${student.averageScore}\n`);
+        console.log(`Percentage: ${student.percentages.toFixed(2)}%\n`);
     });
 }
 
@@ -127,10 +110,6 @@ function handleViewResult() {
 
 
 
-
-
-
- 
 function handleClassResult() {
     const classToView = parseInt(readline.question("Enter class: "));
     let totalMarks = 0;
@@ -142,20 +121,18 @@ function handleClassResult() {
             const total = student.testScores.reduce((sum, score) => sum + (score.marks || 0), 0);
             totalMarks += total;
 
-            const percentage = (total / (student.testScores.length * 100)) * 100; // Assuming each subject is out of 100
+            const percentage = (total / (student.testScores.length * 100)) * 100; 
 
             console.log(`\nStudent Information:
-                +------+--------------------+----------------+--------+
-                | Name |    Total Marks        |    Percentage     |
-                +------+--------------------+----------------+--------+
-                | ${student.name}  |    ${total}                | ${percentage.toFixed(2)}%           |
-                +------+--------------------+----------------+--------+`);
-            
++------+--------------------+----------------+--------+
+| Name |    Total Marks     |    Percentage   |
++------+--------------------+----------------+--------+
+| ${student.name.padEnd(18)} | ${total.toString().padEnd(16)} | ${percentage.toFixed(2)}% |
++------+--------------------+----------------+--------+`);
         }
     });
 
-
-
+   
 }
 
 menu();
