@@ -1,7 +1,10 @@
 import readline from 'readline-sync';
 
 let studentList = [
-    { rollNo: 101, name: "Om", class: 5, gender: "Male", testScores: [] }
+    { rollNo: 101, name: "Om", class: 5, gender: "Male", testScores: [] },
+    { rollNo: 102, name: "Sara", class: 5, gender: "Female", testScores: [] },
+    { rollNo: 103, name: "Raj", class: 6, gender: "Male", testScores: [] },
+    { rollNo: 104, name: "Nina", class: 6, gender: "Female", testScores: [] }
 ];
 
 function menu() {
@@ -10,9 +13,10 @@ function menu() {
         1) Take a Test \n\
         2) Generate Result \n\
         3) Display Result \n\
-        4) Exit`);
+        4) View Classwise Result \n\
+        5) Exit`); 
 
-        const choice = readline.question("Choose an option (1-4): ");
+        const choice = readline.question("Choose an option (1-5): ");
 
         switch (choice) {
             case '1':
@@ -25,6 +29,9 @@ function menu() {
                 handleViewResult();
                 break;
             case '4':
+                handleClassResult();
+                break;
+            case '5':
                 console.log("Exiting the program. Goodbye!");
                 return;
             default:
@@ -61,6 +68,8 @@ function takeTest() {
 
 
 
+
+
 function generateResults() {
     console.log("Calculating results...");
 
@@ -82,9 +91,15 @@ function generateResults() {
 
 
 
+
+
+
+
+
+
 function handleViewResult() {
     console.log("Viewing result...");
-    
+
     studentList.forEach(student => {
         console.log(`\nStudent Information:
 +------+--------------------+----------------+--------+
@@ -106,6 +121,41 @@ function handleViewResult() {
         console.log(`Total Marks: ${student.totalMarks}`);
         console.log(`Average Score: ${student.averageScore}\n`);
     });
+}
+
+
+
+
+
+
+
+
+ 
+function handleClassResult() {
+    const classToView = parseInt(readline.question("Enter class: "));
+    let totalMarks = 0;
+    let studentCount = 0;
+
+    studentList.forEach(student => {
+        if (student.class === classToView) {
+            studentCount++;
+            const total = student.testScores.reduce((sum, score) => sum + (score.marks || 0), 0);
+            totalMarks += total;
+
+            const percentage = (total / (student.testScores.length * 100)) * 100; // Assuming each subject is out of 100
+
+            console.log(`\nStudent Information:
+                +------+--------------------+----------------+--------+
+                | Name |    Total Marks        |    Percentage     |
+                +------+--------------------+----------------+--------+
+                | ${student.name}  |    ${total}                | ${percentage.toFixed(2)}%           |
+                +------+--------------------+----------------+--------+`);
+            
+        }
+    });
+
+
+
 }
 
 menu();
