@@ -1,9 +1,10 @@
+
 import readline from 'readline-sync';
 
 let studentList = [
-    { rollNo: 101, name: "Om", class: 5, gender: "Male", testScores: [], totalMarks: 0, percentages: 0 },
+    { rollNo: 101, name: "Om  ", class: 5, gender: "Male", testScores: [], totalMarks: 0, percentages: 0 },
     { rollNo: 102, name: "Sara", class: 5, gender: "Female", testScores: [], totalMarks: 0, percentages: 0 },
-    { rollNo: 103, name: "Raj", class: 6, gender: "Male", testScores: [], totalMarks: 0, percentages: 0 },
+    { rollNo: 103, name: "Raj ", class: 6, gender: "Male", testScores: [], totalMarks: 0, percentages: 0 },
     { rollNo: 104, name: "Nina", class: 6, gender: "Female", testScores: [], totalMarks: 0, percentages: 0 }
 ];
 
@@ -15,7 +16,8 @@ function menu() {
         3) Display Result \n\
         4) View Classwise Result \n\
         5) Detail Analysis of Result\n\
-        6) Exit`); 
+        6) View Top Performer \n\
+        7) Exit`); 
 
         const choice = readline.question("Choose an option (1-5): ");
 
@@ -36,6 +38,9 @@ function menu() {
                 detailedAnalysis();
                 break;
             case '6':
+                viewTopPerformers();
+                break;
+            case '7':
                 console.log("Exiting the program. Goodbye!");
                 return;
             default:
@@ -52,12 +57,18 @@ function takeTest() {
 
     studentList.forEach(student => {
         student.testScores = [
-            { subject: "Math", marks: Math.floor(Math.random() * 101) },
+            { subject: "Math   ", marks: Math.floor(Math.random() * 101) },
             { subject: "Science", marks: Math.floor(Math.random() * 101) },
             { subject: "English", marks: Math.floor(Math.random() * 101) }
         ];
-        student.testScores.forEach(score => {
-            console.log(`${score.subject}: ${score.marks}`);
+        console.log("=========================================================");
+        console.log(student.name);
+        student.testScores.forEach(score => {            
+            console.log(`              
+                +---------+-------------+
+                | Subject |  Marks      |
+                +---------+-------------+\n\
+                |  ${score.subject} |  ${score.marks}        |`);
         });
     });
 
@@ -75,9 +86,12 @@ function generateResults() {
         student.totalMarks = total; 
         student.percentages = (total / (student.testScores.length * 100)) * 100; 
 
-        console.log(`Student: ${student.name}`);
-        console.log(`Total Marks: ${student.totalMarks}`);
-        console.log(`Percentage: ${student.percentages.toFixed(2)}%\n`);
+
+        console.log(`\n
+            +---------+-------------+------------+
+            | Student |  totalMark  | percentage |
+            +---------+-------------+------------+\n\
+            |    ${student.name}   |     ${student.totalMarks}    | ${student.percentages.toFixed(2)}%    |`);
     });
 
     console.log("Results generated!");
@@ -95,22 +109,24 @@ function handleViewResult() {
 +------+--------------------+----------------+--------+
 | Roll |        Name        |      Class     | Gender |
 +------+--------------------+----------------+--------+
-| ${student.rollNo}  |  ${student.name.padEnd(18)}| ${student.class.toString().padEnd(14)} | ${student.gender.padEnd(6)} |
+| ${student.rollNo}  |  ${student.name}              |   ${student.class}           |    ${student.gender} |
 +------+--------------------+----------------+--------+`);
 
         console.log(`\nTest Scores:
-+--------------------+-------+
-| Subject            | Marks |
-+--------------------+-------+`);
++--------------------+---------+
+| Subject            | Marks   |
++--------------------+---------+`);
 
         student.testScores.forEach(score => {
-            console.log(`| ${score.subject.padEnd(18)} | ${score.marks.toString().padStart(5)} |`);
+            console.log(`| ${score.subject}            | ${score.marks.toString()}      |`);
         });
 
         console.log(`+--------------------+-------+`);
         console.log(`Total Marks: ${student.totalMarks}`);
         console.log(`Percentage: ${student.percentages.toFixed(2)}%\n`);
+        console.log("=============================================================================")
     });
+    
 }
 
 
@@ -131,11 +147,12 @@ function handleClassResult() {
             const percentage = (total / (student.testScores.length * 100)) * 100; 
 
             console.log(`\nStudent Information:
-+------+--------------------+----------------+--------+
-| Name |    Total Marks     |    Percentage   |
-+------+--------------------+----------------+--------+
-| ${student.name.padEnd(18)} | ${total.toString().padEnd(16)} | ${percentage.toFixed(2)}% |
-+------+--------------------+----------------+--------+`);
+                +------+--------------------+----------------+
+                | Name |    Total Marks     |    Percentage  |
+                +------+--------------------+----------------+
+                | ${student.name} |    ${total}             | ${percentage.toFixed(2)}%         |
+                +------+--------------------+----------------+`); 
+                console.log("=============================================================================");               
         }
     });   
 }
@@ -187,7 +204,46 @@ function getGrade(percentage) {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function viewTopPerformers() {
+    console.log("**** Classwise Top Performers ****");
+
+    const classMap = {};
+
+    studentList.forEach(student => {
+        if (!classMap[student.class]) {
+            classMap[student.class] = [];
+        }
+        classMap[student.class].push(student);
+    });
+
+    for (let cls in classMap) {
+        let studentsInClass = classMap[cls];
+
+        for (let i = 0; i < studentsInClass.length - 1; i++) {
+            for (let j = 0; j < studentsInClass.length - 1 - i; j++) {
+                if (studentsInClass[j].totalMarks < studentsInClass[j + 1].totalMarks) {
+                    let temp = studentsInClass[j];
+                    studentsInClass[j] = studentsInClass[j + 1];
+                    studentsInClass[j + 1] = temp;
+                }
+            }
+        }
+
+        let topPerformers = studentsInClass.slice(0, 3);
+
+        console.log("==================================================================")
+        console.log(`\nClass ${cls} Top Performers:`);
+        topPerformers.forEach((student, index) => {
+            console.log(`\n
+                +--------+-------------+-------+
+                | Rank   |    Name     | Marks |
+                +--------+-------------+-------+\n\
+                |    ${index + 1}   |  ${student.name}        | ${student.totalMarks}   |`);                       
+                
+        });
+    }
+}
 
 
 
-menu();
+menu()
